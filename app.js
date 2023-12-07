@@ -40,7 +40,10 @@ async function main() {
     }
 }
 
-main();
+setTimeout(() => {
+    main();
+}, 5000);
+
 
 
 // 监听文本消息并回复相同内容.
