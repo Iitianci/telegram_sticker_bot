@@ -5,7 +5,7 @@ const TeleBot = require('node-telegram-bot-api');
 const token = '6714802559:AAGToYZ0rJlDxWY2NR9ItQt1z111RON8ct4';
 
 // 使用给定的令牌创建 bot 实例.
-const bot = new TeleBot(token, { polling: true });
+const bot = new TeleBot(token, { polling: false });
 
 // console.log("bot", bot)
 
@@ -16,6 +16,32 @@ const bot = new TeleBot(token, { polling: true });
 //     // 发送欢迎消息给用户.
 //     bot.sendMessage(chatId, '欢迎使用我的机器人！');
 // });
+
+
+async function getConnectedClientsCount() {
+    try {
+        // 调用 getWebhookInfo 方法以获得 webhook 相关信息  
+        console.log("调用 getWebhookInfo 方法以获得 webhook 相关信息  ")
+        const info = await bot.getWebHookInfo();
+        console.log("info---------", info)
+        return info.connections;
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function main() {
+    try {
+        const connectedClientsCount = await getConnectedClientsCount();
+
+        console.log(`The bot is running on ${connectedClientsCount} clients.`);
+    } catch (error) {
+        console.error('Failed to retrieve the information:', error);
+    }
+}
+
+main();
+
 
 // 监听文本消息并回复相同内容.
 bot.on('text', (msg) => {
