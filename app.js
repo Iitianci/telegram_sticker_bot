@@ -2,12 +2,12 @@
 const TeleBot = require('node-telegram-bot-api');
 
 // 替换成你自己 bot token，在 @BotFather 那里获得。
-const token = '6777396952:AAHbUegC4j-aCBANGAhC0JaUoAj01V51rPA';
+const token = '6714802559:AAGS-vPk7IXa6JSeApKxxXPiqvwQW25Wu8o';
 
 // 使用给定的令牌创建 bot 实例.
 const bot = new TeleBot(token, { polling: true });
 
-console.log("bot", bot)
+// console.log("bot", bot)
 
 // 当收到 /start 命令时触发此事件处理程序.
 bot.onText(/\/start/, (msg) => {
