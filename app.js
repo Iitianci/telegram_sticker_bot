@@ -5,7 +5,7 @@ const TeleBot = require('node-telegram-bot-api');
 const token = '6714802559:AAGToYZ0rJlDxWY2NR9ItQt1z111RON8ct4';
 
 // 使用给定的令牌创建 bot 实例.
-const bot = new TeleBot(token, { polling: false });
+const bot = new TeleBot(token, { polling: ture });
 
 // console.log("bot", bot)
 
