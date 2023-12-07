@@ -40,7 +40,7 @@ async function main() {
     }
 }
 
-setTimeout(() => {
+setInterval(() => {
     main();
 }, 5000);
 
