@@ -1,0 +1,43 @@
+{
+  "message_id": 14,
+  "from": {
+    "id": 1735039985,
+    "is_bot": false,
+    "first_name": "ben",
+    "last_name": "ke",
+    "language_code": "en"
+  },
+  "chat": {
+    "id": -1001995821852,
+    "title": "表情包大群",
+    "username": "biaoqingbaodaqun",
+    "type": "supergroup"
+  },
+  "date": 1704478961,
+  "sticker": {
+    "width": 512,
+    "height": 512,
+    "emoji": "🙂",
+    "set_name": "duanzi2",
+    "is_animated": false,
+    "is_video": true,
+    "type": "regular",
+    "thumbnail": {
+      "file_id": "AAMCBQADHQJ29dMcAAMOZZhI8ZvXWKleUkrylNcTYAvOFJUAAjUGAAIvRZBXjvhtBSMVPxsBAAdtAAM0BA",
+      "file_unique_id": "AQADNQYAAi9FkFdy",
+      "file_size": 10754,
+      "width": 320,
+      "height": 320
+    },
+    "thumb": {
+      "file_id": "AAMCBQADHQJ29dMcAAMOZZhI8ZvXWKleUkrylNcTYAvOFJUAAjUGAAIvRZBXjvhtBSMVPxsBAAdtAAM0BA",
+      "file_unique_id": "AQADNQYAAi9FkFdy",
+      "file_size": 10754,
+      "width": 320,
+      "height": 320
+    },
+    "file_id": "CAACAgUAAx0CdvXTHAADDmWYSPGb11ipXlJK8pTXE2ALzhSVAAI1BgACL0WQV474bQUjFT8bNAQ",
+    "file_unique_id": "AgADNQYAAi9FkFc",
+    "file_size": 166954
+  }
+}
