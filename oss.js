@@ -3,10 +3,11 @@ const fs = require('fs')
 const axios = require('axios')
 const OSS = require('ali-oss')
 const path = require("path")
+const mime = require('mime-types');
 
 const client = new OSS({
     // yourregion填写Bucket所在地域。以华东1（杭州）为例，Region填写为oss-cn-hangzhou。
-    region: 'oss-us-west-1',
+    region: 'oss-cn-hongkong',
     //是否使用阿里云内网访问，默认值为false
     internal: false,
     //是否使用https,默认值为false
@@ -15,8 +16,43 @@ const client = new OSS({
     accessKeyId: 'LTAI4FywD6CchnqeADGXsErR',
     accessKeySecret: 'xfifcf64CJPPaW2oFfBLXQnDbyDzKR',
     // 填写Bucket名称。
-    bucket: 'usa-bucket-a',
+    bucket: 'hk-bucket-a',
 });
+
+// 判断文件是否存在，并生成有效期为30分钟的访问链接
+async function checkFileAndGenerateUrl(objectName, exp_time = 30 * 60 * 1000) {
+    console.log("查看文件是否存在", objectName)
+    let oss_file_url = ''
+    let oss_file_size = 0
+    try {
+        // 发送 HEAD 请求，检查文件是否存在
+        const exists = await client.head(objectName);
+        if (exists.res.status === 200) {
+            // 获取当前时间
+            console.log("文件存在", exists.res)
+            const currentTime = new Date();
+            const contentType = getContentTypeByExtension(objectName); // 根据文件名后缀获取 Content-Type
+            console.log("contentType", contentType)
+            // 生成带签名的 URL，并设置过期时间
+            oss_file_url = client.signatureUrl(objectName, {
+                expires: exp_time,
+            });
+            oss_file_url = oss_file_url.replace("-internal.", ".")//将内网转为外网
+            oss_file_size = exists.res.headers['content-length']
+
+        } else {
+            console.log('文件不存在。');
+        }
+    } catch (error) {
+        console.error('文件不存在2');
+    }
+    console.log('文件大小', oss_file_size, '文件的访问链接:', oss_file_url);
+    return { oss_file_url, oss_file_size }
+}
+
+// checkFileAndGenerateUrl("tmp/6714802559:AAGToYZ0rJlDxWY2NR9ItQt1z111RON8ct4/stickers/file_107.gif")
+
+
 
 //获取文件列表
 async function file_list() {
@@ -25,33 +61,6 @@ async function file_list() {
     if (result.res.status == 200) {
         let objects = result.objects
         console.log('file_list', objects);
-    }
-}
-// 判断文件是否存在，并生成有效期为10分钟的访问链接
-async function checkFileAndGenerateUrl(objectName, exp_time = 10 * 60 * 1000) {
-    console.log("查看文件是否存在", objectName)
-    let signedUrl = ''
-    try {
-        // 发送 HEAD 请求，检查文件是否存在
-        const exists = await client.head(objectName);
-
-        if (exists.res.status === 200) {
-            console.log('文件存在。');
-
-            // 获取当前时间
-            const currentTime = new Date();
-
-            // 生成带签名的 URL，并设置过期时间
-            signedUrl = client.signatureUrl(objectName, { expires: exp_time });
-
-            console.log('文件的访问链接:', signedUrl);
-        } else {
-            console.log('文件不存在。');
-        }
-        return signedUrl
-    } catch (error) {
-        console.error('文件检查时发生错误:', error);
-        return signedUrl
     }
 }
 
@@ -74,8 +83,8 @@ async function uploadFile_to_oss(file_path, upload_path, exp_time = 10 * 60 * 10
         // 指定CopyObject操作时是否覆盖同名目标Object。此处设置为true，表示禁止覆盖同名Object。
         'x-oss-forbid-overwrite': 'false',
     }
-    let file_url = ''
-    let file_size = 0
+    let oss_file_url = ''
+    let oss_file_size = 0
 
     try {
         // 填写OSS文件完整路径和本地文件的完整路径。OSS文件完整路径中不能包含Bucket名称。
@@ -84,20 +93,21 @@ async function uploadFile_to_oss(file_path, upload_path, exp_time = 10 * 60 * 10
         console.log('上传结果', result);
         // 如果成功上传了
         if (result.url) {
-
             let stats = fs.statSync(file_path);
-            file_size = stats.size
-            file_url = client.signatureUrl(upload_path, { expires: exp_time });
-            console.log('下载文件地址', file_url)
-            console.log('下载文件大小', file_size)
+            oss_file_size = stats.size
+            const contentType = getContentTypeByExtension(file_path); // 根据文件名后缀获取 Content-Type
+            oss_file_url = client.signatureUrl(upload_path, {
+                expires: exp_time
+            });
+            oss_file_url = oss_file_url.replace("-internal.", ".")//将内网转为外网
+            console.log('下载文件地址', oss_file_url)
+            console.log('下载文件大小', oss_file_size)
         }
-
-
     } catch (e) {
         console.log('上传错误', e);
         return {}
     }
-    return { file_url, file_size }
+    return { oss_file_url, oss_file_size }
 }
 
 // 处理请求失败的情况，防止promise.all中断，并返回失败原因和失败文件名。
@@ -119,6 +129,12 @@ async function deletePrefix(prefix) {
     list.objects = list.objects || [];
     const result = await Promise.all(list.objects.map((v) => handleDel(v.name)));
     console.log(result);
+}
+
+// 根据文件后缀获取 Content-Type
+function getContentTypeByExtension(filename) {
+    const extension = filename.split('.').pop();
+    return mime.contentType(extension);
 }
 
 
