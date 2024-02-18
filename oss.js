@@ -13,8 +13,8 @@ const client = new OSS({
     //是否使用https,默认值为false
     secure: true,
     // 阿里云账号AccessKey拥有所有API的访问权限，风险很高。强烈建议您创建并使用RAM用户进行API访问或日常运维，请登录RAM控制台创建RAM用户。
-    accessKeyId: 'LTAI4FywD6CchnqeADGXsErR',
-    accessKeySecret: 'xfifcf64CJPPaW2oFfBLXQnDbyDzKR',
+    accessKeyId: '',
+    accessKeySecret: '',
     // 填写Bucket名称。
     bucket: 'hk-bucket-a',
 });
